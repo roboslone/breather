@@ -1,0 +1,37 @@
+.breather--content {
+  @apply cursor-pointer w-1/2 aspect-square grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+}
+
+.breather--shape-bounds {
+  @apply w-[150px] h-[150px];
+  border-radius: 100%;
+  transform: scale(150%);
+}
+
+.breather--shape {
+  @apply w-[150px] h-[150px];
+  border-radius: 100%;
+
+  background: linear-gradient(
+    45deg,
+    var(--color-cyan-600) 0%,
+    var(--color-purple-600) 100%
+  );
+  opacity: 0.2;
+
+  &.in {
+    transform: scale(150%);
+    opacity: 1;
+  }
+}
+
+.breather--icon {
+  transition: transform 0.3s ease-in-out;
+  color: var(--color-primary);
+
+  &.out {
+    transform: rotate(180deg);
+  }
+}

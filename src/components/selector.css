@@ -1,0 +1,41 @@
+.description {
+  @apply flex flex-col;
+
+  max-height: 80vh;
+  overflow-x: scroll;
+
+  gap: calc(var(--spacing) * 2);
+  color: var(--color-muted-foreground);
+  font-size: var(--text-xs) /* 0.75rem = 12px */;
+  line-height: var(
+    --tw-leading,
+    var(--text-xs--line-height) /* calc(1 / 0.75) ≈ 1.333333 */
+  );
+
+  --tw-font-weight: var(--font-weight-light) /* 300 */;
+  font-weight: var(--font-weight-light) /* 300 */;
+  @property --tw-font-weight {
+    syntax: "*";
+    inherits: false;
+  }
+
+  & > h1 {
+    color: var(--color-violet-400);
+    margin-top: calc(var(--spacing) * 3);
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  & > h2 {
+    color: var(--color-violet-300);
+  }
+
+  & > ol {
+    list-style: disc;
+    padding-left: calc(var(--spacing) * 3);
+  }
+}
