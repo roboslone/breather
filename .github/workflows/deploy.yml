@@ -34,7 +34,9 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: lts/*
-          cache: "pnpm"
+          cache: "npm"
+      - name: Install pnpm
+        run: npm i -g pnpm
       - name: Install dependencies
         run: pnpm ci
       - name: Build
