@@ -5,13 +5,18 @@ import "./breather.css";
 import type { Action } from "@/lib/action";
 
 const iconSize = 36;
-const waitInterval = 0.3;
 
 interface P {
+  countDurationSeconds?: number;
+  waitDurationSeconds?: number;
   actions: Action[];
 }
 
-export const Breather: React.FC<P> = ({ actions }) => {
+export const Breather: React.FC<P> = ({
+  actions,
+  countDurationSeconds = 1,
+  waitDurationSeconds = 0.3,
+}) => {
   const [action, setAction] = React.useState<Action | undefined>(undefined);
   const [counter, setCounter] = React.useState<number | undefined>(undefined);
   const [totalMs, setTotalMs] = React.useState(0);
@@ -29,7 +34,7 @@ export const Breather: React.FC<P> = ({ actions }) => {
     setAction(undefined);
   };
 
-  const sleep = (signal: AbortSignal, seconds: number = 1) => {
+  const sleep = (signal: AbortSignal, seconds: number) => {
     return new Promise((resolve, reject) => {
       let aborted = false;
 
@@ -76,10 +81,10 @@ export const Breather: React.FC<P> = ({ actions }) => {
         setAction(a);
         for (let i = 0; i < a.duration; i++) {
           setCounter(i + 1);
-          await sleep(signal);
+          await sleep(signal, countDurationSeconds);
           if (shouldStop) return;
         }
-        await sleep(signal, waitInterval);
+        await sleep(signal, waitDurationSeconds);
         if (shouldStop) return;
       }
     }
@@ -89,15 +94,19 @@ export const Breather: React.FC<P> = ({ actions }) => {
     console.info("got new actions, resetting", { actions });
     reset();
     setTotalMs(0);
-  }, [actions]);
+  }, [actions, countDurationSeconds, waitDurationSeconds]);
 
   const position: React.CSSProperties = {
     gridRow: "1 / 2",
     gridColumn: "1 / 2",
   };
 
+  let transitionDuration = waitDurationSeconds;
+  if (action !== undefined) {
+    transitionDuration = action.duration * countDurationSeconds;
+  }
   const transition: React.CSSProperties = {
-    transition: `all ${action?.duration ?? waitInterval}s ease-in-out`,
+    transition: `all ${transitionDuration}s ease-in-out`,
   };
 
   const content = (

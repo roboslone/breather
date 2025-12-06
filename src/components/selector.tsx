@@ -2,10 +2,18 @@ import React from "react";
 import { Breather } from "@/components/breather";
 import type { Action } from "@/lib/action";
 import { Button } from "./ui/button";
-import { CircleQuestionMark } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { CircleQuestionMark, Cog, Undo2, Wrench } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import { Sequence } from "./sequence";
 import "./selector.css";
+import { Label } from "./ui/label";
+import { Slider } from "./ui/slider";
 
 interface Option {
   label: React.ReactNode;
@@ -226,12 +234,81 @@ const options: Record<string, Option> = {
   },
 };
 
+const defaultCountDurationSeconds = 1;
+const defaultWaitDurationSeconds = 0.3;
+
 export const Selector: React.FC = () => {
+  const [countDurationSeconds, setCountDurationSeconds] = React.useState(
+    defaultCountDurationSeconds
+  );
+  const [waitDurationSeconds, setWaitDurationSeconds] = React.useState(
+    defaultWaitDurationSeconds
+  );
   const [key, setKey] = React.useState<keyof typeof options>("4-7-8");
+
+  const resetDurations = () => {
+    setCountDurationSeconds(defaultCountDurationSeconds);
+    setWaitDurationSeconds(defaultWaitDurationSeconds);
+  };
+
+  const durationsAtDefault =
+    countDurationSeconds === defaultCountDurationSeconds &&
+    waitDurationSeconds === defaultWaitDurationSeconds;
 
   return (
     <div className="flex flex-col gap-4 h-full w-full">
       <div className="flex flex-wrap gap-2 p-2 justify-center">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-xs opacity-40">
+              <Wrench />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogTitle>Настройки</DialogTitle>
+            <div className="flex flex-col gap-6 pt-2">
+              <div className="flex flex-col gap-4">
+                <Label className="text-violet-300">
+                  <span>Один счет</span>
+                  <div className="ml-auto">{countDurationSeconds} с</div>
+                </Label>
+                <Slider
+                  value={[countDurationSeconds]}
+                  onValueChange={(v) => setCountDurationSeconds(v[0])}
+                  min={0.5}
+                  max={2.5}
+                  step={0.1}
+                />
+              </div>
+              <div className="flex flex-col gap-4">
+                <Label className="text-violet-300">
+                  <span>Перерыв</span>
+                  <div className="ml-auto">{waitDurationSeconds} с</div>
+                </Label>
+                <Slider
+                  value={[waitDurationSeconds]}
+                  onValueChange={(v) => setWaitDurationSeconds(v[0])}
+                  min={0.1}
+                  max={1}
+                  step={0.1}
+                />
+              </div>
+
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetDurations}
+                  disabled={durationsAtDefault}
+                >
+                  <Undo2 />
+                  Сброс
+                </Button>
+              </DialogFooter>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="ghost" size="sm" className="text-xs opacity-40">
@@ -260,7 +337,11 @@ export const Selector: React.FC = () => {
           ))}
       </div>
 
-      <Breather actions={options[key].actions} />
+      <Breather
+        countDurationSeconds={countDurationSeconds}
+        waitDurationSeconds={waitDurationSeconds}
+        actions={options[key].actions}
+      />
     </div>
   );
 };
