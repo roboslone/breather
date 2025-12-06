@@ -2,7 +2,7 @@ import React from "react";
 import { Breather } from "@/components/breather";
 import type { Action } from "@/lib/action";
 import { Button } from "./ui/button";
-import { CircleQuestionMark, Cog, Undo2, Wrench } from "lucide-react";
+import { CircleQuestionMark, Undo2, Wrench } from "lucide-react";
 import {
   Dialog,
   DialogContent,
