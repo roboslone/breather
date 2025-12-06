@@ -14,6 +14,7 @@ import { Sequence } from "./sequence";
 import "./selector.css";
 import { Label } from "./ui/label";
 import { Slider } from "./ui/slider";
+import useLocalStorage from "use-local-storage";
 
 interface Option {
   label: React.ReactNode;
@@ -238,10 +239,12 @@ const defaultCountDurationSeconds = 1;
 const defaultWaitDurationSeconds = 0.3;
 
 export const Selector: React.FC = () => {
-  const [countDurationSeconds, setCountDurationSeconds] = React.useState(
+  const [countDurationSeconds, setCountDurationSeconds] = useLocalStorage(
+    "count-duration-seconds",
     defaultCountDurationSeconds
   );
-  const [waitDurationSeconds, setWaitDurationSeconds] = React.useState(
+  const [waitDurationSeconds, setWaitDurationSeconds] = useLocalStorage(
+    "wait-duration-seconds",
     defaultWaitDurationSeconds
   );
   const [key, setKey] = React.useState<keyof typeof options>("4-7-8");
