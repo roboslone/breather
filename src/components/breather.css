@@ -1,17 +1,22 @@
 .breather--content {
-  @apply cursor-pointer w-1/2 aspect-square grid;
+  @apply cursor-pointer aspect-square grid;
+  width: min(max(30vh, 30vw), 50vh);
   grid-template-columns: 1fr;
   grid-template-rows: auto;
 }
 
+.breather--shape-container {
+  @apply w-full h-full;
+}
+
 .breather--shape-bounds {
-  @apply w-[150px] h-[150px];
+  @apply w-full h-full;
   border-radius: 100%;
   transform: scale(150%);
 }
 
 .breather--shape {
-  @apply w-[150px] h-[150px];
+  @apply w-full h-full;
   border-radius: 100%;
 
   background: linear-gradient(
@@ -34,4 +39,9 @@
   &.out {
     transform: rotate(180deg);
   }
+}
+
+.breather--counter {
+  font-size: 2.5rem;
+  padding-bottom: 36px;
 }

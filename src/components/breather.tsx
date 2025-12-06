@@ -14,6 +14,11 @@ interface P {
 export const Breather: React.FC<P> = ({ actions }) => {
   const [action, setAction] = React.useState<Action | undefined>(undefined);
   const [counter, setCounter] = React.useState<number | undefined>(undefined);
+  const [totalMs, setTotalMs] = React.useState(0);
+
+  let totalSeconds = Math.floor(totalMs / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  totalSeconds = totalSeconds % 60;
 
   const ac = React.useRef<AbortController | undefined>(undefined);
 
@@ -26,14 +31,21 @@ export const Breather: React.FC<P> = ({ actions }) => {
 
   const sleep = (signal: AbortSignal, seconds: number = 1) => {
     return new Promise((resolve, reject) => {
+      let aborted = false;
+
       const abortListener = () => {
         signal.removeEventListener("abort", abortListener);
+        aborted = true;
         reset();
         reject("rejected in sleep");
       };
       signal.addEventListener("abort", abortListener);
 
-      setTimeout(resolve, seconds * 1000);
+      setTimeout(() => {
+        resolve(seconds);
+        if (aborted) return;
+        setTotalMs((p) => p + seconds * 1000);
+      }, seconds * 1000);
     });
   };
 
@@ -76,6 +88,7 @@ export const Breather: React.FC<P> = ({ actions }) => {
   React.useEffect(() => {
     console.info("got new actions, resetting", { actions });
     reset();
+    setTotalMs(0);
   }, [actions]);
 
   const position: React.CSSProperties = {
@@ -109,7 +122,7 @@ export const Breather: React.FC<P> = ({ actions }) => {
       >
         <div
           className={cn(
-            "breather--shape w-[200px] h-[200px] bg-card flex justify-center items-center",
+            "breather--shape bg-card flex justify-center items-center",
             action?.type
           )}
           style={transition}
@@ -120,7 +133,7 @@ export const Breather: React.FC<P> = ({ actions }) => {
         className={cn(
           "flex items-center justify-center",
           "col-start-1 col-end-1 row-start-1 row-end-1 z-10",
-          "flex flex-col items-center gap-2 text-2xl",
+          "flex flex-col items-center gap-2",
           action?.type
         )}
       >
@@ -137,7 +150,7 @@ export const Breather: React.FC<P> = ({ actions }) => {
           />
         )}
         {action !== undefined && counter !== undefined && (
-          <div className="text-xs flex items-center gap-1">
+          <div className="breather--counter flex items-center gap-1 font-mono">
             {counter}
             <span className="opacity-20">/</span>
             {action.duration}
@@ -148,15 +161,22 @@ export const Breather: React.FC<P> = ({ actions }) => {
   );
 
   return (
-    <div
-      className={cn(
-        "breather--container",
-        "w-full h-full",
-        "flex flex-col gap-4 items-center justify-center",
-        action?.type
-      )}
-    >
-      {content}
-    </div>
+    <>
+      <div
+        className={cn(
+          "breather--container",
+          "w-full h-full",
+          "flex flex-col gap-4 items-center justify-center",
+          action?.type
+        )}
+      >
+        {content}
+      </div>
+
+      <div className="text-2xl font-mono flex items-center justify-center p-4 text-muted-foreground">
+        {totalMinutes.toString().padStart(2, "0")}:
+        {totalSeconds.toString().padStart(2, "0")}
+      </div>
+    </>
   );
 };
